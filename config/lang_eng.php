@@ -3,11 +3,11 @@
     $language = 'en';
 
 //intestazione tabella dei dati fattura
-    $header = ['DESCRIPTION','PRICE','TAX','SUB-TOTALS'];
+    $header = array('DESCRIPTION','PRICE','TAX','SUB-TOTALS');
 
     
 //intestazione tabella dei totali
-    $header2 = ['GRAND TOTALS (Excl. Tax)' , 'TAX' , 'TAX Totals' , 'GRAND TOTALS'];
+    $header2 = array ('GRAND TOTALS (Excl. Tax)' , 'TAX' , 'TAX Totals' , 'GRAND TOTALS');
     
 //numero e data fatture
     $fattNum = "INVOICE N.";
@@ -15,12 +15,8 @@
 
 
 //tipi di pagamento contenuti in un array
-   
-    $lbl_Pagamento[0] = "Immediate payment";
-    $lbl_Pagamento[1] = "Direct remittance";
-    $lbl_Pagamento[2] = "cc. postale"; //non usato
-    $lbl_Pagamento[3] = "Cash Order";
-    $lbl_Pagamento[4] = "Direct Debit" ;  
+    $lbl_Pagamento = array ("Immediate payment","Direct remittance","cc. postale","Cash Order","Direct Debit");
+    
     
     //etichette/testi della parte relativa alle condizione dei pagamenti
     $txtPagamento = "PAYMENT: ";

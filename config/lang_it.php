@@ -3,10 +3,10 @@
     $language = 'ita';
 
 //intestazione tabella dei dati fattura
-    $header = ['DESCRIZIONE','IMPONIBILE','IVA','TOTALE'];
+    $header = array ('DESCRIZIONE','IMPONIBILE','IVA','TOTALE');
     
 //intestazione tabella dei totali
-    $header2 = ['IMPONIBILE' , 'IVA' , 'IMPOSTA' , 'TOTALE'];
+    $header2 = array ('IMPONIBILE' , 'IVA' , 'IMPOSTA' , 'TOTALE');
 
 
 //numero e data fatture
@@ -16,12 +16,8 @@
     
 
 //tipi di pagamento contenuti in un array
-   
-    $lbl_Pagamento[0] = "Pagamento immediato";
-    $lbl_Pagamento[1] = "Rimessa diretta";
-    $lbl_Pagamento[2] = "cc. postale";
-    $lbl_Pagamento[3] = "RI.BA.";
-    $lbl_Pagamento[4] = "RID" ;  
+    $lbl_Pagamento = array ("Pagamento immediato","Rimessa diretta","cc. postale","RI.BA.", "RID");
+
     
 //etichette/testi della parte relativa alle condizione dei pagamenti
     $txtPagamento = "PAGAMENTO: ";

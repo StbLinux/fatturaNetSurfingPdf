@@ -5,8 +5,8 @@
 function datiFattura($conn, $id) {
     $sql = 'SELECT * FROM FATTURE WHERE Id = :id';
     $stmt = $conn->prepare($sql);
-    $data = [':id' => $id];
-    if (! $stmt->execute($data)) {
+     $stmt->bindParam(':id', $id);
+    if (! $stmt->execute()) {
         throw new PDOException('Errore PDO ' . implode(',', $conn->errorInfo()));
     } else {
         $fattura = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -29,8 +29,11 @@ function datiFatturePagamenti($conn,$idFattura){
     $sql = "SELECT * FROM FATTURE_PAGAMENTI WHERE idfattura = :id AND stato NOT LIKE" . "'ANNULLATO'";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':id', $idFattura);
-    $stmt->execute();
-    $totale = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (! $stmt->execute()) {
+        throw new PDOException('Errore PDO ' . implode(',', $conn->errorInfo()));
+    } else {
+        $totale = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     return $totale;
 }
 
@@ -40,7 +43,11 @@ function datiCliente($conn, $idCliente){
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':idCliente', $idCliente);
     $stmt->execute();
-    $cliente = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (! $stmt->execute()) {
+        throw new PDOException('Errore PDO ' . implode(',', $conn->errorInfo()));
+    } else {
+        $cliente = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     return $cliente;
 }
 
@@ -51,7 +58,11 @@ function datiBanca($conn, $idBanca){
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':idBanca',$idBanca);
     $stmt->execute();
-    $banca = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (! $stmt->execute()) {
+        throw new PDOException('Errore PDO ' . implode(',', $conn->errorInfo()));
+    } else {
+        $banca = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     return $banca;
 }
 

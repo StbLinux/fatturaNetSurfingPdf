@@ -28,7 +28,7 @@
     
     
 //larghezza e altezza delle celle della tabella fattura
-    $lgIntestazione = [130,25,10,25];
+    $lgIntestazione = array(130,25,10,25);
     $alCelle = 7;
 
 //altezza riquadro bianco contenente le fatture 
@@ -38,7 +38,7 @@
     $numInserimenti = 1;    
     
 //larghezza e altezza delle celle della tabella dei Totali
-    $lgTotali = [55,20,55,60];
+    $lgTotali = array (55,20,55,60);
     $alCelle2 = 7;
 
 //distanza fra la tabella dei totali e le informazioni sul pagamento / banca
@@ -49,7 +49,7 @@
 //percorso dove verranno salvate le fatture
     $path = 'fatture/';
 //percorso dove vengono spostate le fatture già presenti
-    $path2 ='fattureOld/';
+    $path2 ='old/';
     
 
     

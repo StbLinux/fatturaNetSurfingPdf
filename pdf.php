@@ -242,6 +242,7 @@ class Pdf extends FPDF {
         }
     }
 
+//metodo che disegna la tabella centrale e inserisce i dati della fattura    
     function InserisciDatiFattura($posYTab, $alCelle, $margineLeft, $margineRight, $descrizione, $imponibile, $iva) {
 //converto le stringhe per evitare problemi di visualizzazione con i caratteri speciali con i cartteri speciali
         $descrizione = convertiStriga($descrizione);
@@ -609,8 +610,16 @@ try {
 //richiama la funzione che restituisce un array contenente i dati della tabella fattura
 //la fattura viene ricercata per ID   
 $idFattura = $_REQUEST['idFattura']; //id FATTURE CHE ARRIVA VIA POST/GET
-$fattura = datiFattura($conn, $idFattura);
-if(count($fattura)<1){
+
+try {
+    $fattura = datiFattura($conn, $idFattura);
+} catch (PDOException $e) {
+    echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+    die;
+}
+
+
+if (count($fattura) < 1) {
     echo "Fattura non trovata";
     die;
 }
@@ -660,8 +669,15 @@ $pagataIl = $fattura[0]["PagataIl"];
 $status = $fattura[0]["Status"];
 $note = $fattura[0]["Note"];
 
-//ottengo i dati della Netsurfing
-$datiAzienda = datiAzienda($conn);
+//ottengo i dati della Netsurfing interrogando il DB
+try {
+    $datiAzienda = datiAzienda($conn);
+} catch (PDOException $e) {
+    echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+    die;
+}
+
+
 
 $nome = $datiAzienda[0]["nome"];
 $indirizzo = $datiAzienda[0]["indirizzo"];
@@ -681,8 +697,8 @@ $NSfax = $datiAzienda[0]["fax"];
 
 
 //array che conterranno gli imponibili e le causali estratte dal DB    
-$causali = [];
-$imponibili = [];
+$causali = array();
+$imponibili = array();
 
 if ($causale1 != '' && $imponibile1 != '') {
     $causali[] = trim($causale1);
@@ -707,23 +723,28 @@ if ($imponibile2 == '') {
 if ($imponibile3 == '') {
     $imponibile3 = 0;
 }
-if ($totaleFattura == ''){
+if ($totaleFattura == '') {
     $totaleFattura = 0;
 }
-if ($totaleFattura == ''){
+if ($totaleFattura == '') {
     $totaleFattura = 0;
 }
-if ($pagamentoA == ''){
+if ($pagamentoA == '') {
     $pagamentoA = '2';
 }
-if ($pagamentoB == ''){
+if ($pagamentoB == '') {
     $pagamentoB = '1';
 }
 
 
-//recupero i dati del cliente
+//recupero i dati del cliente interrogando il DB
+try {
+    $cliente = datiCliente($conn, $idCliente);
+} catch (PDOException $e) {
+    echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+    die;
+}
 
-$cliente = datiCliente($conn, $idCliente);
 
 $ragioneSociale = $cliente[0]["RagioneSociale"];
 $nazione = $cliente[0]["Stato"];
@@ -757,12 +778,12 @@ if ($iva === "") {
     }
 }
 
-$fileName = $nFattura .'_'.$idFattura .'.pdf';
+$fileName = $nFattura . '_' . $idFattura . '.pdf';
 $esito = "Fattura salvata correttamente";
 //se la fattura è già presente nella cartella la copia in una cartella delle vecchie fatture,assegnandole un nome univoco.
 if (file_exists($path . $fileName)) {
 //genero un file name composto dalla data attuale comprensiva anche di ore minuti e secondi
-    $fileNameNew = $nFattura . '_'.$idFattura.'_' . date("dmyHis") . '.pdf';
+    $fileNameNew = $nFattura . '_' . $idFattura . '_' . date("dmyHis") . '.pdf';
     copy($path . $fileName, $path2 . $fileNameNew);
     $esito = "File $fileName  già esistente, copiato il file nella directory $path2 con nome $fileNameNew";
 }
@@ -823,8 +844,13 @@ if ($pagamentoA == 0 && $status == 'PAGATA') {
 //Estraggo eventuali condizioni di pagamento
     $txtCampoTemp1 = $lbl_Pagamento[$pagamentoB];
 
-//interrogo la tabella FATTURE_PAGAMENTI passando l'id della fattura
-    $tot = datiFatturePagamenti($conn, $idFattura);
+//interrogo la tabella FATTURE_PAGAMENTI interrogando il DB passando l'id della fattura
+    try {
+        $tot = datiFatturePagamenti($conn, $idFattura);
+    } catch (PDOException $e) {
+        echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+        die;
+    }
 //se ottengo più rate 
     if (count($tot) > 1) {
         $txtCampoTemp1 = $txtCampoTemp1 . " " . $txtRate;
@@ -868,11 +894,20 @@ if ($pagamentoA != 0 && $pagamentoB == 0) {
 //variabile che contiene i dati della banca acquisiti da database
 $banca = '';
 if ($pagamentoA != 0) {
-    $banca = datiBanca($conn, $idBanca);
-
+    try {
+        $banca = datiBanca($conn, $idBanca);
+    } catch (PDOException $e) {
+        echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+        die;
+    }
     // Se sul cliente non è associato alcun conto, estraggo quello di default
     if (count($banca < 1)) {
-        $banca = datiBanca($conn, 39);
+        try {
+            $banca = datiBanca($conn, 39);
+        } catch (PDOException $e) {
+            echo $e->getMessage() . "<br> Alla riga " . $e->getLine() . " del file " . $e->getFile();
+            die;
+        }
     }
 
     if ($language == 'ita') {
@@ -900,8 +935,4 @@ if ($pagamentoA != 0) {
 //attualmente come prova la salva in una cartella inclusa nel progetto
 $pdf->Output('F', $path . $fileName);
 echo $esito;
-//header("location: index.html");
-
-
-
 ?>
